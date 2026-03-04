@@ -95,3 +95,52 @@ class Task:
         else:
             info += "Статус: Не выполнена"
         return info
+
+from task import Task
+
+class ImportantTask(Task):
+    """Класс для важных задач (наследник Task)"""
+
+    def __init__(self, title: str, description: str = "", deadline: str = "сегодня"):
+        """
+        Конструктор важной задачи
+        Args:
+            title: Название задачи
+            description: Описание
+            deadline: Дедлайн
+        """
+        # Вызываем конструктор родителя с приоритетом "высокий"
+        super().__init__(title, description, priority="высокий")
+        self.__deadline = deadline
+        self.__reminder_set = False  # исправлено false -> False
+
+    @property
+    def deadline(self):
+        return self.__deadline
+
+    @deadline.setter
+    def deadline(self, new_deadline):
+        if isinstance(new_deadline, str) and len(new_deadline.strip()) > 0:
+            self.__deadline = new_deadline
+        else:
+            raise ValueError("Дедлайн не может быть пустым")
+
+    def set_reminder(self):
+        """Установить напоминание"""
+        self.__reminder_set = True   # исправлено true -> True
+        print(f"🔔 Напоминание установлено для задачи '{self.title}'")
+
+    # Переопределяем метод __str__
+    def __str__(self):
+        """Переопределенный метод для важных задач"""
+        base_str = super().__str__()
+        reminder = "🔔" if self.__reminder_set else "⏰"
+        return f"{base_str} [Дедлайн: {self.__deadline}] {reminder}"
+
+    # Переопределяем метод get_info
+    def get_info(self):
+        """Расширенная информация для важной задачи"""
+        base_info = super().get_info()
+        base_info += f"\nДедлайн: {self.__deadline}"
+        base_info += f"\nНапоминание: {'установлено' if self.__reminder_set else 'не установлено'}"
+        return base_info
